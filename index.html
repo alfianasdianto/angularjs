@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="testApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Belajar Angular JS</title>
+    <script type="text/javascript" src="angular.min.js"></script>
+</head>
+<body>
+
+    <div ng-include="'header.html'" scope="" onload=""></div>
+    <div ng-controller="dataOrang">
+        <input type="text" ng-model="hasil">
+        <ul>
+            <li ng-repeat="dn in data | filter:hasil | orderBy:'id'">
+                {{ dn.nama }} Kota: {{ dn.kota }}
+            </li>
+        </ul>
+    </div>
+
+<script>
+    //module angular
+    var test = angular.module('testApp', []);
+
+    //controller angular
+    test.controller('dataOrang', function($scope){
+        $scope.data = [{id: 2, nama:'Alfian', kota: 'Pamulang'},
+                        {id:1, nama: 'Hari', kota: 'Depok'}];
+    });
+</script>
+</body>
+</html>
