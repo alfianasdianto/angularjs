@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="testApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Belajar Angular JS</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.js"></script>
+</head>
+<body>
+
+    <!-- Custom Directive: 1. Element 2. Attribut -->
+    <header-tittle></header-tittle>
+
+    <div ng-view></div>
+
+    <div part-tittle></div>
+
+<script>
+    //module angular
+    var test = angular.module('testApp', ['ngRoute']);
+
+    test.factory('factoryOrang', function ($http) {
+        var factoryOrang = {};
+
+        factoryOrang.getOrang = function() {
+                                    return $http.get('data.php');
+                                };
+
+        factoryOrang.putOrang = function(datas) {
+                                    return $http.post('add.php', datas);
+                                };
+
+
+        return factoryOrang;
+    });
+
+    test.directive('headerTittle', [function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'header.html',
+            link: function (scope, iElement, iAttrs) {
+
+            }
+        };
+    }])
+
+    test.directive('partTittle', [function () {
+        return {
+            restrict: 'A',
+            templateUrl: 'part.html',
+            controller: function($scope, factoryOrang){
+                /* $scope.data =   [   {id: 2, nama:'Alfian', kota: 'Pamulang'},
+                                    {id:1, nama: 'Hari', kota: 'Depok'}
+                                ]; */
+                factoryOrang.getOrang().success(function(hasil){
+                    $scope.data = hasil;
+                });
+            },
+            link: function (scope, iElement, iAttrs) {
+
+            }
+        };
+    }])
+
+    //route
+    test.config(function ($routeProvider) {
+        $routeProvider
+        .when('/tambahinfo', {
+            templateUrl: 'index2.html',
+            controller: 'add'
+        })
+
+        .when('/kontak', {
+            templateUrl: 'kontak.html',
+        })
+
+        .otherwise({ redirectTo: '/' });
+
+    });
+
+    test.controller('add', function ($scope, $http, factoryOrang) {
+        $scope.tambahData = function(){
+
+            databaru = {
+                nama : $scope.databaru.nama,
+                kota :  $scope.databaru.kota
+            };
+
+            factoryOrang.putOrang(databaru).success(function(hasil){
+                $scope.data.push({
+                    nama : $scope.databaru.nama,
+                    kota :  $scope.databaru.kota
+                });
+
+                $scope.databaru.nama = "";
+                $scope.databaru.kota = "";
+
+                alert(hasil)
+            });
+            // $scope.data.push({
+            //     nama: $scope.databaru.nama,
+            //     kota: $scope.databaru.kota
+            // });
+        };
+    });
+
+</script>
+</body>
+</html>
